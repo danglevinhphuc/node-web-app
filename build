@@ -1,0 +1,2 @@
+docker build . -t phucdang/node-web-app
+docker run -p 8081:8081 -d phucdang/node-web-app
