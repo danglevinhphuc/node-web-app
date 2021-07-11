@@ -8,6 +8,8 @@ WORKDIR /usr/src/app
 # where available (npm@5+)
 COPY package*.json ./
 
+RUN apk add  --no-cache ffmpeg
+
 RUN npm install 
 RUN npm install -g pm2 
 # If you are building your code for production
