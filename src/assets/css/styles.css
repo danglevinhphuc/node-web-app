@@ -165,3 +165,23 @@
 .controls .trim-control:hover {
   background: #038eff;
 }
+#btn-download{
+  display: none;
+}
+.btn {
+  background-color: DodgerBlue;
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 20px;
+  margin-top: 30px;
+  display: block;
+  width: 110px;
+  text-decoration: none;
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}

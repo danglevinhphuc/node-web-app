@@ -1,13 +1,14 @@
 const express = require("express");
 const router = express();
 
-const { ROOT_FOLDER, MP3 } = require("../config/common");
 const { trimMp3 } = require('../helpers/resizeMedia')
 const { uploadCloudDinary } = require("../helpers/func");
+const { renderOutput } = require("../helpers/common");
+const ROOT_VIDEO_UPLOAD = 'video/upload'
 
-const renderOutput = () => {
-    const uniqueFilename = new Date().toISOString();
-    return `${ROOT_FOLDER}/${uniqueFilename}.${MP3}`
+const getUrlDownload = (data) => {
+    if (!data) return ''
+    return data.url.replace(ROOT_VIDEO_UPLOAD, `${ROOT_VIDEO_UPLOAD}/fl_attachment`)
 }
 
 router.post("/trim-mp3", async (req, res) => {
@@ -26,7 +27,9 @@ router.post("/trim-mp3", async (req, res) => {
     return uploadCloudDinary(
         { path },
         (data) => {
-            return res.json(data);
+            const newUrl = getUrlDownload(data)
+            console.log(newUrl)
+            return res.json(newUrl);
         },
         (err) => {
             return res.send(err);

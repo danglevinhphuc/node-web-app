@@ -29,12 +29,6 @@ const uploadFile = async () => {
     try {
         let formData = new FormData();
         if (!fileupload || !fileupload.files || !fileupload.files[0]) return
-        let { name } = fileupload.files[0]
-        if (name.indexOf(`.${MP3}`) !== name.length - 4) {
-            // File type is .mp3
-            alert(`File must be ${MP3}`)
-            return
-        }
         formData.append("file", fileupload.files[0]);
         if (uploading) {
             return
@@ -55,6 +49,12 @@ const uploadFile = async () => {
         closeProgress()
         console.log(error)
     }
+}
+
+const downloadFile = (url) => {
+    let tagA = document.getElementById('btn-download')
+    tagA.style.display = "block"
+    tagA.setAttribute('href', url)
 }
 
 const handleTrimVideo = async () => {
@@ -78,8 +78,9 @@ const handleTrimVideo = async () => {
             body: JSON.stringify(bodyData)
         });
         const result = await response.json();
-        if (result.url) {
-            alert(`File trim ${result.url}`)
+        debugger
+        if (result) {
+            downloadFile(result)
         }
         closeProgress()
     } catch (error) {

@@ -1,5 +1,6 @@
 
 const childProcess = require('child_process')
+const { renderOutput } = require('./common')
 const exc = (joinCmd) => {
     return new Promise((resolve, rejects) => {
         childProcess.exec(joinCmd, function (err) {
@@ -24,6 +25,26 @@ const trimMp3 = async ({ input, start, end, output }) => {
     return exc(joinCmd)
 };
 
+const convertOtherFileToMp3 = async ({ input, output }) => {
+    //ffmpeg -i video.webm -map 0:a output1.mp3
+    let cmd = ["ffmpeg", "-i"];
+    cmd.push(input);
+    cmd.push('-map 0:a')
+    cmd.push(output);
+    const joinCmd = cmd.join(" ");
+    console.log(joinCmd);
+    return exc(joinCmd)
+};
+
+const handleFileOtherMp3 = async (file) => {
+    if (!file) return null
+    const output = renderOutput()
+    const input = file.path
+    await convertOtherFileToMp3({ output, input })
+    return output
+}
+
 module.exports = {
     trimMp3,
+    handleFileOtherMp3
 };

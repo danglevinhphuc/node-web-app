@@ -3,8 +3,9 @@ const router = express();
 
 const multer = require("multer");
 const { ROOT_FOLDER, MP3 } = require("../config/common");
+const { removeFile } = require("../helpers/common");
 const { uploadCloudDinary } = require("../helpers/func");
-
+const { handleFileOtherMp3 } = require('../helpers/resizeMedia')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, `${ROOT_FOLDER}/`);
@@ -17,17 +18,20 @@ const storage = multer.diskStorage({
 
 router.post("/upload", (req, res) => {
     const upload = multer({ storage }).single("file");
-    upload(req, res, function (err) {
+    upload(req, res, async function (err) {
         if (err) {
             return res.send(err);
         }
         console.log("file uploaded to server");
-        console.log(req.file);
+
+        let path = req.file.path;
         if (req.file.originalname.indexOf(MP3) === -1) {
-            throw new Error('File must be mp3')
+            path = await handleFileOtherMp3(req.file)
+            removeFile(req.file.path)
         }
+        if (!path) { throw new Error('File wrong') }
         if (!req.file) { throw new Error('File empty') }
-        const path = req.file.path;
+
         return uploadCloudDinary(
             { path },
             (data) => {
