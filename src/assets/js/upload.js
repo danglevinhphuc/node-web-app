@@ -78,7 +78,6 @@ const handleTrimVideo = async () => {
             body: JSON.stringify(bodyData)
         });
         const result = await response.json();
-        debugger
         if (result) {
             downloadFile(result)
         }
