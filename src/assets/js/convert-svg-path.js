@@ -361,10 +361,16 @@ class Group {
     // Combines all underlying elements into a single path.
     flatten() {
         let path = new Path();
-        this.children.forEach(child => {
-            path.extend(child.flatten());
-        });
+        if (this.children && this.children.commands) {
+            path.extend(this.children.flatten());
+        }
+        if (this.children && this.children.children) {
+            this.children.children.forEach(child => {
+                path.extend(child.flatten());
+            });
+        }
         return path;
+
     }
 }
 
@@ -728,10 +734,14 @@ function parseSvg(svg) {
             viewHeight = parseFloat(m[4]);
         }
     }
+
     let paths = Array.from(svg.children)
         .filter(child => SUPPORTED_ELEMENTS.includes(child.nodeName))
         .map(child => parseElement(child));
-    let g = new Group(paths);
+
+    let listG = paths.map(path => {
+        return new Group(path);
+    })
     let scale = 1;
     if (width === undefined) {
         width = viewWidth;
@@ -742,46 +752,38 @@ function parseSvg(svg) {
     if (viewWidth !== undefined) {
         scale = width / viewWidth;
     }
-    return { width, height, viewWidth, viewHeight, scale, tx: viewX, ty: viewY, root: g };
+    return { width, height, viewWidth, viewHeight, scale, tx: viewX, ty: viewY, root: listG };
 }
 
 // ============================================================================================================
-function svgToPath(svgElement, options = {}) {
+function svgToPath(svgElement, options = {}, colors) {
     let svg = parseSvg(svgElement);
-    let path = svg.root.flatten();
 
+    let paths = svg.root.map(item => {
+
+        let path = item.flatten(item);
+        path = path.scale(svg.scale);
+        if (svg.tx !== 0 || svg.ty !== 0) {
+            path = path.translate(-svg.tx, -svg.ty);
+        }
+        let d = path.toPathData(options.precision || 4);
+        return d
+    })
     // Compensate for view width scaling.
-    path = path.scale(svg.scale);
-    if (svg.tx !== 0 || svg.ty !== 0) {
-        path = path.translate(-svg.tx, -svg.ty);
-    }
 
     let viewWidth = svg.viewWidth;
     let viewHeight = svg.viewHeight;
     let width = svg.width;
     let height = svg.height;
-    const ratio = svg.width / svg.height;
 
-    // Normalize given size
-    if (options.height !== undefined) {
-        let factor = options.height / height;
-        path = path.scale(factor);
-        viewWidth = options.height * ratio;
-        viewHeight = options.height;
-        width = viewWidth;
-        height = viewHeight;
+    const result = renderPath(paths, colors)
+    return `<svg width="${width}" height="${height}" viewBox="0 0 ${viewWidth} ${viewHeight}" xmlns="http://www.w3.org/2000/svg">${result}</svg>`;
+}
+
+const renderPath = (paths = [], colors = []) => {
+    let result = ''
+    for (let i = 0; i < paths.length; i++) {
+        result = result + `<path d="${paths[i]}" ${colors[i] ? `fill="${colors[i]}"` : ''}/>`
     }
-    if (options.width !== undefined) {
-        let factor = options.width / width;
-        path = path.scale(factor);
-        viewWidth = options.width;
-        viewHeight = options.width / ratio;
-        width = viewWidth;
-        height = viewHeight;
-    }
-
-    // path.roundOff();
-    let d = path.toPathData(options.precision || 4);
-
-    return `<svg width="${width}" height="${height}" viewBox="0 0 ${viewWidth} ${viewHeight}" xmlns="http://www.w3.org/2000/svg"><path d="${d}"/></svg>`;
+    return result
 }

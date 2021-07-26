@@ -1,3 +1,4 @@
+const SUPPORTED_ELEMENTS_SVG = ["g", "line", "rect", "circle", "ellipse", "path", "polygon"];
 $(function () {
     $("input[name=fileuploadsvg]").change(async function (event) {
         var fileToUpload = $(this).get(0).files;
@@ -6,6 +7,7 @@ $(function () {
             if (file) {
                 const { name } = file
                 const result = await renderSvgGetPath(file)
+                document.getElementById('newFile').innerHTML = result
                 downloadFile(result, name)
             }
         }
@@ -21,9 +23,20 @@ const renderSvgGetPath = (files) => {
             let parser = new DOMParser()
             let doc = parser.parseFromString(svgData, 'image/svg+xml')
             let svg = doc.getElementsByTagName('svg')[0]
-            let path = svgToPath(svg);
-
-            return resolve(path)
+            document.body.appendChild(svg)
+            let colors = []
+            for (let i = 0; i < svg.childNodes.length; i++) {
+                let child = svg.childNodes[i]
+                if (child && child.tagName && SUPPORTED_ELEMENTS_SVG.find(o => o.toLocaleLowerCase() === child.tagName.toLocaleLowerCase())) {
+                    const fill = window.getComputedStyle(child).fill
+                    colors.push(fill)
+                }
+            }
+            let path = svgToPath(svg, undefined, colors);
+            svg.remove()
+            setTimeout(() => {
+                resolve(path)
+            }, 100);
         }
         reader.readAsText(files)
         reader.onerror = reject
