@@ -23,7 +23,7 @@ app.set('view engine', 'ejs');
 app.use(corsSetup())
 // index page
 app.get('/', function (req, res) {
-    res.render('index');
+    res.render('convertSvg');
 });
 app.get('/convert-svg', function (req, res) {
     res.render('convertSvg');
