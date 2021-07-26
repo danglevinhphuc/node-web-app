@@ -21,6 +21,7 @@ COPY . /usr/src/app
 
 ENV CLOUD_NAME=phuc-company \
     API_KEY=838986499921257 \
-    API_SECRET=24nudYVIDiv2F03axjKBbYP_eHY
+    API_SECRET=24nudYVIDiv2F03axjKBbYP_eHY \
+    DOMAIN_CONNECTION=['https://trim-audio.herokuapp.com']
 
 CMD  pm2 start --no-daemon  processes.json
