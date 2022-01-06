@@ -23,6 +23,10 @@ jobs:
           name: Check node version
           command: |
             node -v
+      - run:
+          name: Check node version
+          command: |
+            npm install
 
       - run:
           name: build test
@@ -40,12 +44,6 @@ workflows:
     jobs:
       - Manual_Build:
           type: approval
-          filters:
-            branches:
-              only: deploy
-      - Production_Build:
-          requires:
-            - Manual_Build
           post-steps:
             - jira/notify:
                 environment_type: production
