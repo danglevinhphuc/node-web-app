@@ -43,4 +43,14 @@ workflows:
           filters:
             branches:
               only: deploy
+    - Production_Build:
+          requires:
+            - Manual_Build
+          post-steps:
+            - heroku/notify:
+                environment_type: production
+                job_type: deployment
+          filters:
+            branches:
+              only: deploy
       
