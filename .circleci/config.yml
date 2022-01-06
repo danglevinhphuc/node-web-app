@@ -1,0 +1,29 @@
+version: 2.1 # using 2.1 provides access to orbs and other features
+jobs:
+  Manual_Build:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - node
+    - run:
+      name: checking test
+      command: |
+            npm test
+    - save_cache:
+      paths:
+        - node_modules
+      key: node
+orbs:
+  heroku: circleci/heroku@0.0.10 # Invoke the Heroku orb
+workflows:
+  build-tests:
+    jobs:
+      - Manual_Build:
+          type: approval
+          filters:
+            branches:
+              only: master
+      
