@@ -42,7 +42,7 @@ orbs:
 workflows:
   build-tests:
     jobs:
-      - Manual_Build:
+      - Production_Build:
           type: approval
           post-steps:
             - jira/notify:
