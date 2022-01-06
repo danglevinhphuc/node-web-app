@@ -10,6 +10,14 @@ jobs:
       - restore_cache:
           keys:
           - node
+      - run:
+          name: Install node@v12.16.3
+          command: |
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm install v12.16.3
+            nvm use v12.16.3
+            nvm alias default v12.16.3
 
       - run:
           name: Check node version
