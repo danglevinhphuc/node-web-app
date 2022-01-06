@@ -42,7 +42,7 @@ workflows:
           type: approval
           filters:
             branches:
-              only: master
+              only: deploy
       - Production_Build:
           requires:
             - Manual_Build
