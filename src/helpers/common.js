@@ -6,8 +6,9 @@ const renderOutput = (type = MP3) => {
 }
 
 const removeFile = (path) => {
-    if (!path) return
+    if (!path) return false
     fs.unlinkSync(path);
+    return true
 }
 
 module.exports = {
