@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  Manual_Build:
+  Production_Build:
     machine:
       image: ubuntu-1604:201903-01
   
@@ -34,7 +34,7 @@ jobs:
             - node_modules
           key: node
 orbs:
-  heroku: circleci/heroku@0.0.10 # Invoke the Heroku orb
+  jira: circleci/jira@1.3.1
 workflows:
   build-tests:
     jobs:
@@ -42,12 +42,12 @@ workflows:
           type: approval
           filters:
             branches:
-              only: deploy
-    - Production_Build:
+              only: master
+      - Production_Build:
           requires:
             - Manual_Build
           post-steps:
-            - heroku/notify:
+            - jira/notify:
                 environment_type: production
                 job_type: deployment
           filters:
