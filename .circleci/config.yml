@@ -43,6 +43,7 @@ workflows:
   build-tests:
     jobs:
       - Manual_Build:
+          type: approval
           filters:
             branches:
               only: deploy
