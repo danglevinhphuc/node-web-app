@@ -42,12 +42,14 @@ orbs:
 workflows:
   build-tests:
     jobs:
-      - Production_Build:
+      - Manual_Build:
           type: approval
-          post-steps:
-            - jira/notify:
-                environment_type: production
-                job_type: deployment
+          filters:
+            branches:
+              only: deploy
+      - Production_Build:
+          requires:
+            - Manual_Build
           filters:
             branches:
               only: deploy
