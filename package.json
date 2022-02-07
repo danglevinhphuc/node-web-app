@@ -6,7 +6,7 @@
     "author": "First Last <first.last@example.com>",
     "main": "server.js",
     "scripts": {
-        "start": "nodemon test",
+        "start": "node ./src/index.js",
         "test": "nodemon ./src/index.js"
     },
     "dependencies": {
