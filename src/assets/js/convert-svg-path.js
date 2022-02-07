@@ -718,7 +718,7 @@ function parseElement(el) {
     }
 }
 
-function parseSvg(svg) {
+function parseSvg(svg, resultData) {
     let viewBox = svg.getAttribute('viewBox');
     let width = parseUnitNumber(svg.getAttribute('width'));
     let height = parseUnitNumber(svg.getAttribute('height'));
@@ -735,7 +735,7 @@ function parseSvg(svg) {
         }
     }
 
-    let paths = Array.from(svg.children)
+    let paths = Array.from(resultData)
         .filter(child => SUPPORTED_ELEMENTS.includes(child.nodeName))
         .map(child => parseElement(child));
 
@@ -756,9 +756,8 @@ function parseSvg(svg) {
 }
 
 // ============================================================================================================
-function svgToPath(svgElement, options = {}, colors) {
-    let svg = parseSvg(svgElement);
-
+function svgToPath(svgElement, options = {}, colors, resultData) {
+    let svg = parseSvg(svgElement, resultData);
     let paths = svg.root.map(item => {
 
         let path = item.flatten(item);
